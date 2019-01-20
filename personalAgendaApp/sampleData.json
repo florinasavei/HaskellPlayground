@@ -1,0 +1,17 @@
+{
+    "Owner": {
+        "PersonalData" : {
+
+        },
+        "Skills" : [
+
+        ]
+    },
+    "Organizer" : [
+        {
+            "Date" : "",
+            "Location" : "",
+            "Observation" : "Lorem Ipsum"
+        }
+    ]
+}
