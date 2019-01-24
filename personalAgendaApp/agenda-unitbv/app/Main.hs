@@ -5,4 +5,4 @@ import MainLib
 main :: IO ()
 main = do
     result <- mainPrompt
-    putStrLn result
+    putStrLn "Program completed!"
