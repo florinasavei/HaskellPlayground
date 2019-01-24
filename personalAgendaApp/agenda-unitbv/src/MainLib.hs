@@ -2,6 +2,8 @@ module MainLib
     ( mainPrompt
     ) where
 
+import System.IO  
+
 mainPrompt :: IO (String)
 mainPrompt = do
     putStrLn ""
@@ -46,7 +48,8 @@ performMainPromptAction :: String -> IO (String) -> IO (String)
 --Creating Agenda
 performMainPromptAction "1" mainPrompt = do
     putStrLn "Enter agenda name:"
-    agendaName <- getLine 
+    agendaName <- getLine
+    createDatabase  agendaName
     let result = "Creating agenda " ++ agendaName ++ " completed!"
     mainPrompt
     return result
@@ -93,4 +96,11 @@ performAgendaOwnerDetailsAction "0" agendaOwnerDetailsPrompt = do
     agendaInsidePrompt
     return "Perform another action inside agenda"   
                 
-        
+
+createDatabase :: String -> IO ()
+createDatabase filename = do
+    appendFile ("data/_availableAgendas.txt") (filename ++ "\n")  
+    writeFile ("data/"++ filename ++ "-agenda.txt") ("Agenda " ++ filename ++ " : ")  
+
+
+    
