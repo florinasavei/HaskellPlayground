@@ -2,7 +2,9 @@ module MainLib
     ( mainPrompt
     ) where
 
-import System.IO  
+import System.IO
+import Control.Monad
+import Data.List
 
 mainPrompt :: IO (String)
 mainPrompt = do
@@ -57,6 +59,7 @@ performMainPromptAction "1" mainPrompt = do
 --Listing Agendas 
 performMainPromptAction "2" mainPrompt = do
     putStrLn "Available agendas: "
+    listAllAvailableAgendas
     putStrLn "Enter agenda name to load:"
     agendaName <- getLine 
     let result = "Loded " ++ agendaName ++ " agenda"
@@ -103,4 +106,13 @@ createDatabase filename = do
     writeFile ("data/"++ filename ++ "-agenda.txt") ("Agenda " ++ filename ++ " : ")  
 
 
-    
+listAllAvailableAgendas :: IO ()
+listAllAvailableAgendas = do
+    let lines = readLines "data/_availableAgendas.txt"
+    linesList <- lines
+    let result = intercalate ", " linesList
+    putStrLn result
+    putStrLn "------------------------------------------"
+
+readLines :: FilePath -> IO [String]
+readLines = fmap lines . readFile
