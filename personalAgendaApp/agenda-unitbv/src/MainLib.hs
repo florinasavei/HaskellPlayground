@@ -83,22 +83,28 @@ performMainPromptAction "2" mainPrompt = do
     return result
 
 performMainPromptAction "0" mainPrompt = do
-    return "Goodby!"    
+    writeFile ("data/__currentAgenda.txt") ("")
+    return "Goodby!"
+ 
+performMainPromptAction x mainPrompt = do
+    putStrLn "!!! Invalid option !!!"
+    mainPrompt
+    return ""       
 
 performAgendaInsidePromptAction :: String -> IO (String) -> String -> IO (String)
 --Owner management options
 performAgendaInsidePromptAction "1" agendaInsidePrompt agendaName = do
     agendaOwnerDetailsPrompt
-    return "Listing owner management options"
+    return ""
 
 --Owner management options
 performAgendaInsidePromptAction "3" agendaInsidePrompt agendaName = do
     agendaEventsPrompt
-    return "Listing curent agenda options"
+    return ""
 
 performAgendaInsidePromptAction "0" agendaInsidePrompt agendaName = do
     mainPrompt
-    return "Choose another action"
+    return ""
 
 performAgendaInsidePromptAction x agendaInsidePrompt agendaName = do
     mainPrompt
@@ -125,9 +131,8 @@ performAgendaOwnerDetailsAction "1" agendaOwnerDetailsPrompt agendaName = do
     let agendaOnwer = Person {fname = fn, lname = ln, age = ag, phone = ph, email = em}
     let ownerToString = personToString (agendaOnwer)
     writeFile ("data/"++ agendaName ++ "-owenrinfo.txt") (ownerToString) 
-    
     agendaOwnerDetailsPrompt
-    return "Owner information updated"
+    return ""
  
 performAgendaOwnerDetailsAction "2" agendaOwnerDetailsPrompt agendaName = do
     putStrLn "Listing your information:"
@@ -137,17 +142,17 @@ performAgendaOwnerDetailsAction "2" agendaOwnerDetailsPrompt agendaName = do
     putStrLn result
     putStrLn "------------------------------------------"
     agendaOwnerDetailsPrompt
-    return "Owner information listed"   
+    return ""   
   
  
 performAgendaOwnerDetailsAction "0" agendaOwnerDetailsPrompt agendaName = do
     agendaInsidePrompt
-    return "Perform another action inside agenda"   
+    return ""   
 
 performAgendaOwnerDetailsAction x agendaOwnerDetailsPrompt agendaName = do
     putStrLn "!!! Invalid option !!!"
     agendaInsidePrompt
-    return "Perform another action inside agenda"       
+    return ""       
 
 performAgendaEventAction :: String -> IO (String) -> String -> IO (String)    
 --listin all events in agenda
@@ -159,7 +164,7 @@ performAgendaEventAction "1" agendaEventsPrompt agendaName = do
     putStrLn result
     putStrLn "------------------------------------------"
     agendaEventsPrompt
-    return "Event added to agenda"
+    return ""
  
 performAgendaEventAction "2" agendaEventsPrompt agendaName = do
     putStrLn "Event Id:"
@@ -173,7 +178,7 @@ performAgendaEventAction "2" agendaEventsPrompt agendaName = do
     let myEventToString = eventToString (newEvent)
     appendFile ("data/"++ agendaName ++ "-agenda.txt") (myEventToString)
     agendaEventsPrompt
-    return "Added new event to agenda"
+    return ""
 
 performAgendaEventAction "3" agendaEventsPrompt agendaName = do
     putStrLn "Are you sure you want to clear all events? (Y/N)"
@@ -184,16 +189,16 @@ performAgendaEventAction "3" agendaEventsPrompt agendaName = do
         else 
             putStrLn ""
     agendaEventsPrompt
-    return "Added new event to agenda"
+    return ""
 
 performAgendaEventAction "0" agendaEventsPrompt agendaName = do
     agendaInsidePrompt
-    return "Perform another action inside agenda"       
+    return ""       
 
 performAgendaEventAction x agendaEventsPrompt agendaName = do
     putStrLn "Invalid option"
     agendaEventsPrompt
-    return "Perform another action inside agenda"         
+    return ""         
 
 createDatabase :: String -> IO ()
 createDatabase filename = do
