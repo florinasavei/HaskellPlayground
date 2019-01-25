@@ -5,6 +5,7 @@ module MainLib
 import System.IO
 import Control.Monad
 import Data.List
+import Data.DateTime
 
 mainPrompt :: IO (String)
 mainPrompt = do
@@ -150,3 +151,10 @@ personToString :: Person -> String
 personToString (Person {fname = fn, lname = ln, age = ag, phone = ph, email = em}) =
     "fname: " ++ fn ++ " , lname: " ++ ln ++ " , age: " ++ show ag ++ " , phone: " ++ ph ++ " , email: " ++ em ++ " \n"
 
+data Event = Event {  eid :: Int
+                    , name :: String
+                    , location :: String
+                    }    
+
+eventToString (Event {eid = id, name = n, location = l}) =
+    "eid: " ++ id ++ " , name: " ++ n ++ " , location: " ++ l                  
