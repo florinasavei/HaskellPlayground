@@ -21,17 +21,17 @@ mainPrompt = do
 
 agendaInsidePrompt  :: IO (String)  
 agendaInsidePrompt = do
-    --let myAgenda = do readFile "data/__currentAgenda.txt"
-    --currentAgenda <- return myAgenda
-    putStrLn ""
-    --putStrLn "Enter agenda " ++ currentAgenda ++ " option"
+    myAgenda <- readFile "data/__currentAgenda.txt"
+    putStrLn "--------------------------------"
+    putStrLn myAgenda
+    putStrLn "Enter agenda option"
     putStrLn "1 - Your information"
     putStrLn "2 - Contacts"
     putStrLn "3 - Events"
     putStrLn "4 - Clear agenda"
     putStrLn "0 - Exit Agenda"
     userOption <- getLine
-    actionResult <- performAgendaInsidePromptAction  userOption agendaInsidePrompt
+    actionResult <- performAgendaInsidePromptAction  userOption agendaInsidePrompt myAgenda
     putStrLn actionResult
     return actionResult
 
@@ -72,13 +72,13 @@ performMainPromptAction "2" mainPrompt = do
 performMainPromptAction "0" mainPrompt = do
     return "Goodby!"    
 
-performAgendaInsidePromptAction :: String -> IO (String) -> IO (String)
+performAgendaInsidePromptAction :: String -> IO (String) -> String -> IO (String)
 --Owner management options
-performAgendaInsidePromptAction "1" agendaInsidePrompt = do
+performAgendaInsidePromptAction "1" agendaInsidePrompt agendaName = do
     agendaOwnerDetailsPrompt
-    return "Listing owner management options"
+    return "Listing owner management options for "
 
-performAgendaInsidePromptAction "0" agendaInsidePrompt = do
+performAgendaInsidePromptAction "0" agendaInsidePrompt agendaName = do
     mainPrompt
     return "Choose another action"    
     
