@@ -96,11 +96,18 @@ performAgendaInsidePromptAction "3" agendaInsidePrompt agendaName = do
     agendaEventsPrompt
     return "Listing curent agenda options"
 
-
 performAgendaInsidePromptAction "0" agendaInsidePrompt agendaName = do
     mainPrompt
-    return "Choose another action"    
-    
+    return "Choose another action"
+
+performAgendaInsidePromptAction x agendaInsidePrompt agendaName = do
+    mainPrompt
+    return "Invalid option "   
+
+{--------------------------
+    Owner details options
+---------------------------}
+
 performAgendaOwnerDetailsAction  :: String -> IO (String) -> String -> IO (String)
 --Manage owner details
 performAgendaOwnerDetailsAction "1" agendaOwnerDetailsPrompt agendaName = do
@@ -131,12 +138,16 @@ performAgendaOwnerDetailsAction "2" agendaOwnerDetailsPrompt agendaName = do
     putStrLn "------------------------------------------"
     agendaOwnerDetailsPrompt
     return "Owner information listed"   
-
+  
  
 performAgendaOwnerDetailsAction "0" agendaOwnerDetailsPrompt agendaName = do
     agendaInsidePrompt
     return "Perform another action inside agenda"   
 
+performAgendaOwnerDetailsAction x agendaOwnerDetailsPrompt agendaName = do
+    putStrLn "!!! Invalid option !!!"
+    agendaInsidePrompt
+    return "Perform another action inside agenda"       
 
 performAgendaEventAction :: String -> IO (String) -> String -> IO (String)    
 --listin all events in agenda
@@ -161,9 +172,28 @@ performAgendaEventAction "2" agendaEventsPrompt agendaName = do
     let newEvent = Event {eid = id, name = n, location = l}
     let myEventToString = eventToString (newEvent)
     appendFile ("data/"++ agendaName ++ "-agenda.txt") (myEventToString)
-    
     agendaEventsPrompt
     return "Added new event to agenda"
+
+performAgendaEventAction "3" agendaEventsPrompt agendaName = do
+    putStrLn "Are you sure you want to clear all events? (Y/N)"
+    userConfirmation <- getLine
+    if userConfirmation == "Y"
+        then 
+            writeFile ("data/"++ agendaName ++ "-agenda.txt") ("")
+        else 
+            putStrLn ""
+    agendaEventsPrompt
+    return "Added new event to agenda"
+
+performAgendaEventAction "0" agendaEventsPrompt agendaName = do
+    agendaInsidePrompt
+    return "Perform another action inside agenda"       
+
+performAgendaEventAction x agendaEventsPrompt agendaName = do
+    putStrLn "Invalid option"
+    agendaEventsPrompt
+    return "Perform another action inside agenda"         
 
 createDatabase :: String -> IO ()
 createDatabase filename = do
