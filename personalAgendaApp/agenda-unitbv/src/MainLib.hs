@@ -37,13 +37,14 @@ agendaInsidePrompt = do
 
 agendaOwnerDetailsPrompt :: IO (String) 
 agendaOwnerDetailsPrompt = do
+    myAgenda <- readFile "data/__currentAgenda.txt"
     putStrLn ""
     putStrLn "Owner management"
     putStrLn "1 - Update owner information"
     putStrLn "2 - List owner information"
     putStrLn "0 - Main menu"
     userOption <- getLine
-    actionResult <- performAgendaOwnerDetailsAction  userOption agendaOwnerDetailsPrompt
+    actionResult <- performAgendaOwnerDetailsAction  userOption agendaOwnerDetailsPrompt myAgenda
     --putStrLn actionResult
     return actionResult     
 
@@ -82,23 +83,35 @@ performAgendaInsidePromptAction "0" agendaInsidePrompt agendaName = do
     mainPrompt
     return "Choose another action"    
     
-performAgendaOwnerDetailsAction  :: String -> IO (String) -> IO (String)
+performAgendaOwnerDetailsAction  :: String -> IO (String) -> String -> IO (String)
 --Manage owner details
-performAgendaOwnerDetailsAction "1" agendaOwnerDetailsPrompt = do
+performAgendaOwnerDetailsAction "1" agendaOwnerDetailsPrompt agendaName = do
     putStrLn "Your First Name:"
-    firstName <- getLine 
-    putStrLn "Your lat Name:"
-    lastName <- getLine 
+    fn <- getLine 
+    putStrLn "Your Last Name:"
+    ln <- getLine 
+    putStrLn "Your Age:"
+    ageAsString <- getLine
+    let ag = read ageAsString :: Int
+    putStrLn " Your Phone:"
+    ph <- getLine
+    putStrLn " Your Email:"
+    em <- getLine 
+    let agendaOnwer = Person {fname = fn, lname = ln, age = ag, phone = ph, email = em}
+    let ownerToString = personToString (agendaOnwer)
+    writeFile ("data/"++ agendaName ++ "-owenrinfo.txt") (ownerToString) 
+    
     agendaOwnerDetailsPrompt
     return "Owner information updated"
  
-performAgendaOwnerDetailsAction "2" agendaOwnerDetailsPrompt = do
+performAgendaOwnerDetailsAction "2" agendaOwnerDetailsPrompt agendaName = do
     putStrLn "Listing your information:"
+
     agendaOwnerDetailsPrompt
     return "Owner information listed"   
 
  
-performAgendaOwnerDetailsAction "0" agendaOwnerDetailsPrompt = do
+performAgendaOwnerDetailsAction "0" agendaOwnerDetailsPrompt agendaName = do
     agendaInsidePrompt
     return "Perform another action inside agenda"   
                 
