@@ -93,9 +93,9 @@ performAgendaOwnerDetailsAction "1" agendaOwnerDetailsPrompt agendaName = do
     putStrLn "Your Age:"
     ageAsString <- getLine
     let ag = read ageAsString :: Int
-    putStrLn " Your Phone:"
+    putStrLn "Your Phone:"
     ph <- getLine
-    putStrLn " Your Email:"
+    putStrLn "Your Email:"
     em <- getLine 
     let agendaOnwer = Person {fname = fn, lname = ln, age = ag, phone = ph, email = em}
     let ownerToString = personToString (agendaOnwer)
@@ -106,7 +106,11 @@ performAgendaOwnerDetailsAction "1" agendaOwnerDetailsPrompt agendaName = do
  
 performAgendaOwnerDetailsAction "2" agendaOwnerDetailsPrompt agendaName = do
     putStrLn "Listing your information:"
-
+    let lines = readLines ("data/"++ agendaName ++ "-owenrinfo.txt")
+    linesList <- lines
+    let result = intercalate " " linesList
+    putStrLn result
+    putStrLn "------------------------------------------"
     agendaOwnerDetailsPrompt
     return "Owner information listed"   
 
@@ -119,7 +123,7 @@ performAgendaOwnerDetailsAction "0" agendaOwnerDetailsPrompt agendaName = do
 createDatabase :: String -> IO ()
 createDatabase filename = do
     appendFile ("data/_availableAgendas.txt") (filename ++ "\n")  
-    writeFile ("data/"++ filename ++ "-agenda.txt") ("Agenda " ++ filename ++ " : ")  
+    writeFile ("data/"++ filename ++ "-agenda.txt") ("")  
     writeFile ("data/"++ filename ++ "-owenrinfo.txt") ("")  
 
 listAllAvailableAgendas :: IO ()
@@ -129,6 +133,7 @@ listAllAvailableAgendas = do
     let result = intercalate ", " linesList
     putStrLn result
     putStrLn "------------------------------------------"
+    
 
 readLines :: FilePath -> IO [String]
 readLines = fmap lines . readFile
