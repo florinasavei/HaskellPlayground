@@ -24,6 +24,7 @@ dependencies:
 - sqlite-simple
 - process
 - aeson
+- directory
 
 library:
   source-dirs: src

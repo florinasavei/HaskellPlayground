@@ -2,9 +2,13 @@ module MainLib
     ( mainPrompt
     ) where
 
+import Prelude hiding (catch)        
 import System.IO
 import Control.Monad
 import Data.List
+import System.Directory
+import Control.Exception
+import System.IO.Error hiding (catch)
 --import Data.DateTime
 
 mainPrompt :: IO (String)
@@ -29,7 +33,7 @@ agendaInsidePrompt = do
     putStrLn "1 - Your information"
     putStrLn "2 - Contacts"
     putStrLn "3 - Events"
-    putStrLn "4 - Clear agenda"
+    putStrLn "4 - Clear events"
     putStrLn "0 - Exit Agenda"
     userOption <- getLine
     actionResult <- performAgendaInsidePromptAction  userOption agendaInsidePrompt myAgenda
@@ -82,6 +86,23 @@ performMainPromptAction "2" mainPrompt = do
     agendaInsidePrompt
     return result
 
+--Deleting Agenda
+performMainPromptAction "3" mainPrompt = do
+    putStrLn "Available agendas: "
+    listAllAvailableAgendas
+    putStrLn "Enter agenda name to delete:"
+    agendaName <- getLine
+    putStrLn "Are you sure you want to DELETE the agenda? (Y/N)"
+    userConfirmation <- getLine
+    if userConfirmation == "Y"
+        then do 
+            removeIfExists ("data/" ++ agendaName ++ "-agenda.txt")
+            removeIfExists ("data/" ++ agendaName ++ "-ownerinfo.txt")
+        else 
+            putStrLn ""
+    mainPrompt
+    return ""    
+
 performMainPromptAction "0" mainPrompt = do
     writeFile ("data/__currentAgenda.txt") ("")
     return "Goodby!"
@@ -130,13 +151,13 @@ performAgendaOwnerDetailsAction "1" agendaOwnerDetailsPrompt agendaName = do
     em <- getLine 
     let agendaOnwer = Person {fname = fn, lname = ln, age = ag, phone = ph, email = em}
     let ownerToString = personToString (agendaOnwer)
-    writeFile ("data/"++ agendaName ++ "-owenrinfo.txt") (ownerToString) 
+    writeFile ("data/"++ agendaName ++ "-ownerinfo.txt") (ownerToString) 
     agendaOwnerDetailsPrompt
     return ""
  
 performAgendaOwnerDetailsAction "2" agendaOwnerDetailsPrompt agendaName = do
     putStrLn "Listing your information:"
-    let lines = readLines ("data/"++ agendaName ++ "-owenrinfo.txt")
+    let lines = readLines ("data/"++ agendaName ++ "-ownerinfo.txt")
     linesList <- lines
     let result = intercalate " " linesList
     putStrLn result
@@ -204,7 +225,7 @@ createDatabase :: String -> IO ()
 createDatabase filename = do
     appendFile ("data/_availableAgendas.txt") (filename ++ "\n")  
     writeFile ("data/"++ filename ++ "-agenda.txt") ("")  
-    writeFile ("data/"++ filename ++ "-owenrinfo.txt") ("")  
+    writeFile ("data/"++ filename ++ "-ownerinfo.txt") ("")  
 
 listAllAvailableAgendas :: IO ()
 listAllAvailableAgendas = do
@@ -238,4 +259,9 @@ data Event = Event {  eid :: Int
 eventToString (Event {eid = id, name = n, location = l}) =
     "eid: " ++ show id ++ " , name: " ++ n ++ " , location: " ++ l ++ " \n"
 
-    
+
+removeIfExists :: FilePath -> IO ()
+removeIfExists fileName = removeFile fileName `catch` handleExists
+  where handleExists e
+          | isDoesNotExistError e = return ()
+          | otherwise = throwIO e    
