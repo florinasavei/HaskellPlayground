@@ -5,7 +5,7 @@ module MainLib
 import System.IO
 import Control.Monad
 import Data.List
-import Data.DateTime
+--import Data.DateTime
 
 mainPrompt :: IO (String)
 mainPrompt = do
@@ -46,9 +46,20 @@ agendaOwnerDetailsPrompt = do
     putStrLn "0 - Main menu"
     userOption <- getLine
     actionResult <- performAgendaOwnerDetailsAction  userOption agendaOwnerDetailsPrompt myAgenda
-    --putStrLn actionResult
     return actionResult     
 
+agendaEventsPrompt :: IO (String)
+agendaEventsPrompt = do
+    myAgenda <- readFile "data/__currentAgenda.txt"
+    putStrLn ""
+    putStrLn "Inner agenda management"
+    putStrLn "1 - Show all events"
+    putStrLn "2 - Add event"
+    putStrLn "3 -  Clear agenda"
+    putStrLn "0 - Main menu"
+    userOption <- getLine
+    actionResult <- performAgendaEventAction  userOption agendaOwnerDetailsPrompt myAgenda
+    return actionResult
 
 performMainPromptAction :: String -> IO (String) -> IO (String)
 --Creating Agenda
@@ -78,7 +89,13 @@ performAgendaInsidePromptAction :: String -> IO (String) -> String -> IO (String
 --Owner management options
 performAgendaInsidePromptAction "1" agendaInsidePrompt agendaName = do
     agendaOwnerDetailsPrompt
-    return "Listing owner management options for "
+    return "Listing owner management options"
+
+--Owner management options
+performAgendaInsidePromptAction "3" agendaInsidePrompt agendaName = do
+    agendaEventsPrompt
+    return "Listing curent agenda options"
+
 
 performAgendaInsidePromptAction "0" agendaInsidePrompt agendaName = do
     mainPrompt
@@ -119,7 +136,33 @@ performAgendaOwnerDetailsAction "2" agendaOwnerDetailsPrompt agendaName = do
 performAgendaOwnerDetailsAction "0" agendaOwnerDetailsPrompt agendaName = do
     agendaInsidePrompt
     return "Perform another action inside agenda"   
-                
+
+performAgendaEventAction :: String -> IO (String) -> String -> IO (String)    
+--listin all events in agenda
+performAgendaEventAction "1" agendaEventsPrompt agendaName = do
+    putStrLn "Listing all evemts:"
+    let lines = readLines ("data/"++ agendaName ++ "-agenda.txt")
+    linesList <- lines
+    let result = intercalate " " linesList
+    putStrLn result
+    putStrLn "------------------------------------------"
+    agendaEventsPrompt
+    return "Event added to agenda"
+ 
+performAgendaEventAction "2" agendaEventsPrompt agendaName = do
+    putStrLn "Event Id:"
+    eidString <- getLine
+    let id = read eidString :: Int
+    putStrLn "Event name:"
+    n <- getLine
+    putStrLn "Event locations:"
+    l <- getLine 
+    let newEvent = Event {eid = id, name = n, location = l}
+    let myEventToString = eventToString (newEvent)
+    appendFile ("data/"++ agendaName ++ "-agenda.txt") (myEventToString)
+    
+    agendaEventsPrompt
+    return "Added new event to agenda"
 
 createDatabase :: String -> IO ()
 createDatabase filename = do
@@ -157,4 +200,6 @@ data Event = Event {  eid :: Int
                     }    
 
 eventToString (Event {eid = id, name = n, location = l}) =
-    "eid: " ++ id ++ " , name: " ++ n ++ " , location: " ++ l                  
+    "eid: " ++ show id ++ " , name: " ++ n ++ " , location: " ++ l
+
+    
