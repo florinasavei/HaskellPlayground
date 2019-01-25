@@ -104,7 +104,7 @@ createDatabase :: String -> IO ()
 createDatabase filename = do
     appendFile ("data/_availableAgendas.txt") (filename ++ "\n")  
     writeFile ("data/"++ filename ++ "-agenda.txt") ("Agenda " ++ filename ++ " : ")  
-
+    writeFile ("data/"++ filename ++ "-owenrinfo.txt") ("")  
 
 listAllAvailableAgendas :: IO ()
 listAllAvailableAgendas = do
@@ -116,3 +116,16 @@ listAllAvailableAgendas = do
 
 readLines :: FilePath -> IO [String]
 readLines = fmap lines . readFile
+
+data Person = Person{ fname :: String
+                    , lname :: String
+                    , age :: Int
+                    , phone :: String
+                    , email :: String
+                    } deriving (Eq,Ord,Show,Read)
+
+
+personToString :: Person -> String
+personToString (Person {fname = fn, lname = ln, age = ag, phone = ph, email = em}) =
+    "fname: " ++ fn ++ " , lname: " ++ ln ++ " , age: " ++ show ag ++ " , phone: " ++ ph ++ " , email: " ++ em ++ " \n"
+
