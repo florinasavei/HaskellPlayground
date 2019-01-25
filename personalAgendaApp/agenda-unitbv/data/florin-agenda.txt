@@ -1,1 +1,0 @@
-eid: 1 , name: Exam , location: Corpul P

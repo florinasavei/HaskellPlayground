@@ -55,10 +55,10 @@ agendaEventsPrompt = do
     putStrLn "Inner agenda management"
     putStrLn "1 - Show all events"
     putStrLn "2 - Add event"
-    putStrLn "3 -  Clear agenda"
+    putStrLn "3 - Clear agenda"
     putStrLn "0 - Main menu"
     userOption <- getLine
-    actionResult <- performAgendaEventAction  userOption agendaOwnerDetailsPrompt myAgenda
+    actionResult <- performAgendaEventAction  userOption agendaEventsPrompt myAgenda
     return actionResult
 
 performMainPromptAction :: String -> IO (String) -> IO (String)
@@ -137,13 +137,14 @@ performAgendaOwnerDetailsAction "0" agendaOwnerDetailsPrompt agendaName = do
     agendaInsidePrompt
     return "Perform another action inside agenda"   
 
+
 performAgendaEventAction :: String -> IO (String) -> String -> IO (String)    
 --listin all events in agenda
 performAgendaEventAction "1" agendaEventsPrompt agendaName = do
     putStrLn "Listing all evemts:"
     let lines = readLines ("data/"++ agendaName ++ "-agenda.txt")
     linesList <- lines
-    let result = intercalate " " linesList
+    let result = intercalate "  \r\n" linesList
     putStrLn result
     putStrLn "------------------------------------------"
     agendaEventsPrompt
@@ -200,6 +201,6 @@ data Event = Event {  eid :: Int
                     }    
 
 eventToString (Event {eid = id, name = n, location = l}) =
-    "eid: " ++ show id ++ " , name: " ++ n ++ " , location: " ++ l
+    "eid: " ++ show id ++ " , name: " ++ n ++ " , location: " ++ l ++ " \n"
 
     
