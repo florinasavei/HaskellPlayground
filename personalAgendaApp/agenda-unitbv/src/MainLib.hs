@@ -21,8 +21,10 @@ mainPrompt = do
 
 agendaInsidePrompt  :: IO (String)  
 agendaInsidePrompt = do
+    --let myAgenda = do readFile "data/__currentAgenda.txt"
+    --currentAgenda <- return myAgenda
     putStrLn ""
-    putStrLn "Enter agenda option"
+    --putStrLn "Enter agenda " ++ currentAgenda ++ " option"
     putStrLn "1 - Your information"
     putStrLn "2 - Contacts"
     putStrLn "3 - Events"
@@ -61,7 +63,8 @@ performMainPromptAction "2" mainPrompt = do
     putStrLn "Available agendas: "
     listAllAvailableAgendas
     putStrLn "Enter agenda name to load:"
-    agendaName <- getLine 
+    agendaName <- getLine
+    writeFile ("data/__currentAgenda.txt") (agendaName) 
     let result = "Loded " ++ agendaName ++ " agenda"
     agendaInsidePrompt
     return result
