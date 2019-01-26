@@ -101,6 +101,7 @@ performMainPromptAction "3" mainPrompt = do
             writeFile ("data/_availableAgendas.txt") (remainingAgendasList)
             removeIfExists ("data/" ++ agendaName ++ "-agenda.txt")
             removeIfExists ("data/" ++ agendaName ++ "-ownerinfo.txt")
+            removeIfExists ("data/" ++ agendaName ++ "-contactList.txt")
         else 
             putStrLn ""
     mainPrompt
@@ -141,16 +142,16 @@ performAgendaInsidePromptAction x agendaInsidePrompt agendaName = do
 performAgendaOwnerDetailsAction  :: String -> IO (String) -> String -> IO (String)
 --Manage owner details
 performAgendaOwnerDetailsAction "1" agendaOwnerDetailsPrompt agendaName = do
-    putStrLn "Your First Name:"
+    putStrLn "First Name:"
     fn <- getLine 
-    putStrLn "Your Last Name:"
+    putStrLn "Last Name:"
     ln <- getLine 
-    putStrLn "Your Age:"
+    putStrLn "Age:"
     ageAsString <- getLine
     let ag = read ageAsString :: Int
-    putStrLn "Your Phone:"
+    putStrLn "Phone:"
     ph <- getLine
-    putStrLn "Your Email:"
+    putStrLn "Email:"
     em <- getLine 
     let agendaOnwer = Person {fname = fn, lname = ln, age = ag, phone = ph, email = em}
     let ownerToString = personToString (agendaOnwer)
@@ -229,6 +230,7 @@ createDatabase filename = do
     appendFile ("data/_availableAgendas.txt") (filename ++ "\n")  
     writeFile ("data/"++ filename ++ "-agenda.txt") ("")  
     writeFile ("data/"++ filename ++ "-ownerinfo.txt") ("")  
+    writeFile ("data/"++ filename ++ "-contactList.txt") ("")  
 
 listAllAvailableAgendas :: IO ([String])
 listAllAvailableAgendas = do
