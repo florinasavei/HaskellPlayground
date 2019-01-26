@@ -139,6 +139,10 @@ performMainPromptAction x mainPrompt = do
     mainPrompt
     return ""       
 
+{--------------------------------
+    Agenda owner management
+--------------------------------}    
+
 performAgendaInsidePromptAction :: String -> IO (String) -> String -> IO (String)
 --Owner management options
 performAgendaInsidePromptAction "1" agendaInsidePrompt agendaName = do
@@ -206,9 +210,10 @@ performAgendaOwnerDetailsAction x agendaOwnerDetailsPrompt agendaName = do
     agendaInsidePrompt
     return ""      
 
-{-
-Contact management
--}
+{----------------------------
+    Contact management
+--------------------------------}
+
 performContactManagementAction "1" contactsPrompt agendaName = do
     putStrLn "First Name:"
     fn <- getLine 
@@ -262,9 +267,9 @@ performContactManagementAction x contactsPrompt agendaName = do
     contactsPrompt
     return ""      
     
-{-
-Agenda event management
--}    
+{---------------------------
+    Agenda event management
+----------------------------}    
 
 performAgendaEventAction :: String -> IO (String) -> String -> IO (String)    
 --listin all events in agenda
@@ -331,6 +336,10 @@ listAllAvailableAgendas = do
 readLines :: FilePath -> IO [String]
 readLines = fmap lines . readFile
 
+{----------------
+Data Structures
+------------------}
+
 data Person = Person{ fname :: String
                     , lname :: String
                     , age :: Int
@@ -351,6 +360,10 @@ data Event = Event {  eid :: Int
 eventToString (Event {eid = id, name = n, location = l}) =
     "eid: " ++ show id ++ " , name: " ++ n ++ " , location: " ++ l ++ " \n"
 
+
+{-----------------
+    Helpers
+----------------}    
 
 removeIfExists :: FilePath -> IO ()
 removeIfExists fileName = removeFile fileName `catch` handleExists
