@@ -52,6 +52,20 @@ agendaOwnerDetailsPrompt = do
     actionResult <- performAgendaOwnerDetailsAction  userOption agendaOwnerDetailsPrompt myAgenda
     return actionResult     
 
+contactsPrompt :: IO (String) 
+contactsPrompt = do
+    myAgenda <- readFile "data/__currentAgenda.txt"
+    putStrLn ""
+    putStrLn "Contacts management"
+    putStrLn "1 - Add contact"
+    putStrLn "2 - List contacts"
+    putStrLn "3 - Delete contact by full name"
+    putStrLn "4 - Delete all contacts"
+    putStrLn "0 - Main menu"
+    userOption <- getLine
+    actionResult <- performContactManagementAction  userOption contactsPrompt myAgenda
+    return actionResult      
+
 agendaEventsPrompt :: IO (String)
 agendaEventsPrompt = do
     myAgenda <- readFile "data/__currentAgenda.txt"
@@ -65,6 +79,11 @@ agendaEventsPrompt = do
     actionResult <- performAgendaEventAction  userOption agendaEventsPrompt myAgenda
     return actionResult
 
+
+{-
+Top-Level Agenda actions
+-}    
+    
 performMainPromptAction :: String -> IO (String) -> IO (String)
 --Creating Agenda
 performMainPromptAction "1" mainPrompt = do
@@ -122,6 +141,10 @@ performAgendaInsidePromptAction "1" agendaInsidePrompt agendaName = do
     agendaOwnerDetailsPrompt
     return ""
 
+performAgendaInsidePromptAction "2" agendaInsidePrompt agendaName = do
+    contactsPrompt
+    return ""    
+
 --Owner management options
 performAgendaInsidePromptAction "3" agendaInsidePrompt agendaName = do
     agendaEventsPrompt
@@ -177,7 +200,67 @@ performAgendaOwnerDetailsAction "0" agendaOwnerDetailsPrompt agendaName = do
 performAgendaOwnerDetailsAction x agendaOwnerDetailsPrompt agendaName = do
     putStrLn "!!! Invalid option !!!"
     agendaInsidePrompt
-    return ""       
+    return ""      
+
+{-
+Contact management
+-}
+performContactManagementAction "1" contactsPrompt agendaName = do
+    putStrLn "First Name:"
+    fn <- getLine 
+    putStrLn "Last Name:"
+    ln <- getLine 
+    putStrLn "Age:"
+    ageAsString <- getLine
+    let ag = read ageAsString :: Int
+    putStrLn "Phone:"
+    ph <- getLine
+    putStrLn "Email:"
+    em <- getLine 
+    let agendaContact = Person {fname = fn, lname = ln, age = ag, phone = ph, email = em}
+    let agendaContactToString = personToString (agendaContact)
+    appendFile ("data/"++ agendaName ++ "-contactList.txt") (agendaContactToString)
+    contactsPrompt 
+    return ""
+
+performContactManagementAction "2" contactsPrompt agendaName = do
+    putStrLn "Listing contacts events:"
+    let lines = readLines ("data/"++ agendaName ++ "-contactList.txt")
+    linesList <- lines
+    let result = intercalate "  \r\n" linesList
+    putStrLn result
+    putStrLn "------------------------------------------"
+    contactsPrompt
+    return ""
+
+performContactManagementAction "3" contactsPrompt agendaName = do
+    putStrLn "!! Not implemented !! "
+    contactsPrompt
+    return ""
+
+performContactManagementAction "4" contactsPrompt agendaName = do
+    putStrLn "Are you sure you want to DELETE all contacts? (Y/N)"
+    userConfirmation <- getLine
+    if userConfirmation == "Y"
+        then do
+            writeFile ("data/"++ agendaName ++ "-contactList.txt") ("")
+        else 
+            putStrLn ""
+    contactsPrompt        
+    return ""
+
+performContactManagementAction "0" contactsPrompt agendaName = do
+    agendaInsidePrompt
+    return ""    
+
+performContactManagementAction x contactsPrompt agendaName = do
+    putStrLn "!! Invalid option !! "
+    contactsPrompt
+    return ""      
+    
+{-
+Agenda event management
+-}    
 
 performAgendaEventAction :: String -> IO (String) -> String -> IO (String)    
 --listin all events in agenda
