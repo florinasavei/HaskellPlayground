@@ -11,6 +11,10 @@ import Control.Exception
 import System.IO.Error hiding (catch)
 --import Data.DateTime
 
+{-
+ Prompts
+-}
+
 mainPrompt :: IO (String)
 mainPrompt = do
     putStrLn ""
