@@ -89,13 +89,16 @@ performMainPromptAction "2" mainPrompt = do
 --Deleting Agenda
 performMainPromptAction "3" mainPrompt = do
     putStrLn "Available agendas: "
-    listAllAvailableAgendas
+    agendasList <- listAllAvailableAgendas
     putStrLn "Enter agenda name to delete:"
     agendaName <- getLine
     putStrLn "Are you sure you want to DELETE the agenda? (Y/N)"
     userConfirmation <- getLine
     if userConfirmation == "Y"
-        then do 
+        then do
+            let reaminingAgendas = remove agendaName agendasList
+            let remainingAgendasList = intercalate " \r\n" reaminingAgendas
+            writeFile ("data/_availableAgendas.txt") (remainingAgendasList)
             removeIfExists ("data/" ++ agendaName ++ "-agenda.txt")
             removeIfExists ("data/" ++ agendaName ++ "-ownerinfo.txt")
         else 
@@ -227,14 +230,14 @@ createDatabase filename = do
     writeFile ("data/"++ filename ++ "-agenda.txt") ("")  
     writeFile ("data/"++ filename ++ "-ownerinfo.txt") ("")  
 
-listAllAvailableAgendas :: IO ()
+listAllAvailableAgendas :: IO ([String])
 listAllAvailableAgendas = do
     let lines = readLines "data/_availableAgendas.txt"
     linesList <- lines
     let result = intercalate ", " linesList
     putStrLn result
     putStrLn "------------------------------------------"
-    
+    return linesList
 
 readLines :: FilePath -> IO [String]
 readLines = fmap lines . readFile
@@ -264,4 +267,6 @@ removeIfExists :: FilePath -> IO ()
 removeIfExists fileName = removeFile fileName `catch` handleExists
   where handleExists e
           | isDoesNotExistError e = return ()
-          | otherwise = throwIO e    
+          | otherwise = throwIO e
+          
+remove element list = filter (\e -> e/=element) list
